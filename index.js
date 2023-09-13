@@ -29,7 +29,7 @@ passport.use(new FacebookStrategy({
   clientSecret: process.env.APP_SECRET,
   callbackURL: 'http://localhost:3001/home'
 }, (accessToken, refreshToken, profile, done) => {
-
+  console.log(accessToken);
   const user = { id: profile.id, displayName: profile.displayName };
   return done(null, user);
 }));
