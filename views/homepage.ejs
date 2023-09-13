@@ -1,59 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social MS</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social MS</title>
+
+  <!-- Link to external CSS file -->
+  <link rel="stylesheet" href="/stylesheets/styles.css">
 </head>
 <body>
-    <h1>Hello</h1>
+  <h1>Hello</h1>
 
-    <h2>User Data</h2>
-    <% if (userData) { %>
-      <div class="user-data">
-        <p class="user-data-field">Name: <%= userData.name %></p>
-        <p class="user-data-field">Email: <%= userData.email %></p>
-        <p class="user-data-field">Birthday: <%= userData.birthday %></p>
-        <p class="user-data-field">Gender: <%= userData.gender %></p>
-        <% if (userData.hometown) { %>
-          <p class="user-data-field">Hometown: <%= userData.hometown.name %></p>
-        <% } %>
-        <p class="user-data-field">
-          Link: <a href="<%= userData.link %>" target="_blank" rel="noopener noreferrer"><%= userData.link %></a>
-        </p>
-        <% if (userData.age_range && userData.age_range.min && userData.age_range.max) { %>
-          <p class="user-data-field">Age Range: <%= userData.age_range.min %> - <%= userData.age_range.max %></p>
-        <% } else { %>
-          <p class="user-data-field">Age Range: Not specified</p>
-        <% } %>
-      </div>
+  <h2 class="section-title">User Data</h2>
+  <% if (userData) { %>
+  <div class="user-data">
+    <p class="user-data-field">Name: <%= userData.name %></p>
+    <p class="user-data-field">Email: <%= userData.email %></p>
+    <p class="user-data-field">Birthday: <%= userData.birthday %></p>
+    <p class="user-data-field">Gender: <%= userData.gender %></p>
+    <% if (userData.hometown) { %>
+    <p class="user-data-field">Hometown: <%= userData.hometown.name %></p>
+    <% } %>
+    <p class="user-data-field">
+      Link:
+      <a href="<%= userData.link %>" class="user-link" target="_blank" rel="noopener noreferrer"><%= userData.link %></a>
+    </p>
+    <% if (userData.age_range && userData.age_range.min && userData.age_range.max) { %>
+    <p class="user-data-field">Age Range: <%= userData.age_range.min %> - <%= userData.age_range.max %></p>
     <% } else { %>
-      <p>Loading user data...</p>
+    <p class="user-data-field">Age Range: Not specified</p>
     <% } %>
+  </div>
+  <% } else { %>
+  <p>Loading user data...</p>
+  <% } %>
 
-    <h3>Feed Data</h3>
-    <% if (feedData.data) { %>
-      <% feedData.data.map(({ message }) => { %>
-        <p><%= message %></p>
-      <% }) %>
-    <% } %>
+  <!-- <h3 class="section-title">Feed Data</h3>
+  <% if (feedData.data) { %> <% feedData.data.map(({ message }) => { %>
+  <p><%= message %></p>
+  <% }) %> <% } %> -->
 
-    <h3>Most Common Words in Feed</h3>
-    <% if (mostCommonWords) { %>
-      <ul>
-        <% mostCommonWords.forEach((word) => { %>
-          <li><%= word[0] %>: <%= word[1] %> times</li>
-        <% }) %>
-      </ul>
-    <% } %>
+  <h3 class="section-title">Most Common Words in Feed</h3>
+  <% if (mostCommonWords) { %>
+  <ul class="common-words">
+    <% mostCommonWords.forEach((word) => { %>
+    <li><%= word %></li>
+    <% }) %>
+  </ul>
+  <% } %>
 
-
-    <h3>Sentiment Analysisssssss</h3>
-    <% if (sentiment) { %>
-      <p>Sentiment Score: <%= sentiment.score %></p>
-      <p>Sentiment Description: <%= sentiment.score > 0 ? 'Positive' : sentiment.score < 0 ? 'Negative' : 'Neutral' %></p>
-    <% } else { %>
-      <p>No sentiment analysis available.</p>
-    <% } %>
+  <h3 class="section-title">Sentiment Analysisssssss</h3>
+  <% if (sentiment) { %>
+  <p class="sentiment-score">Sentiment Score: <%= sentiment.score %></p>
+  <p class="sentiment-description">
+    Sentiment Description: <%= sentiment.score > 0 ? 'Positive' : sentiment.score < 0 ? 'Negative' : 'Neutral' %>
+  </p>
+  <% } else { %>
+  <p class="no-sentiment">No sentiment analysis available.</p>
+  <% } %>
 </body>
 </html>

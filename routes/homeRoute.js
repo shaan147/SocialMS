@@ -10,30 +10,36 @@ const wrapAsync = require('../utils/wrapAsync');
 const tokenizer = new natural.WordTokenizer();
 
 function preprocessText(text) {
+  // Remove punctuation and lowercase the text
+  text = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').toLowerCase();
+  
   // Tokenize the text
   const tokens = tokenizer.tokenize(text);
-  // Perform other preprocessing steps here if needed
-  return tokens;
+  
+  // Define a list of common stopwords
+  const stopwords = ["the", "and", "of", "in", "to", "a", "for", "on", "with", "as", "by", "an", "at"];
+  
+  // Filter out stopwords
+  const filteredTokens = tokens.filter((token) => !stopwords.includes(token));
+  
+  return filteredTokens;
 }
 
-function analyzeTextFrequency(textData, n, minOccurrences) {
-  // Create n-grams (you can choose the n value, e.g., 1 for words, 2 for bigrams, etc.)
-  const nGrams = natural.NGrams.ngrams(textData, n);
-
-  // Calculate the frequency of each n-gram
-  const nGramFrequency = {};
-  nGrams.forEach((gram) => {
-    const gramStr = gram.join(' ');
-    nGramFrequency[gramStr] = (nGramFrequency[gramStr] || 0) + 1;
+function analyzeTextFrequency(textData, minOccurrences) {
+  // Calculate the frequency of each word
+  const wordFrequency = {};
+  textData.forEach((word) => {
+    wordFrequency[word] = (wordFrequency[word] || 0) + 1;
   });
 
-  // Filter n-grams that occur at least 'minOccurrences' times
-  const mostCommonWords = Object.keys(nGramFrequency).filter(
-    (gram) => nGramFrequency[gram] >= minOccurrences
+  // Filter words that occur at least 'minOccurrences' times
+  const mostCommonWords = Object.keys(wordFrequency).filter(
+    (word) => wordFrequency[word] >= minOccurrences
   );
 
   return mostCommonWords;
 }
+
 
 // Your existing /home route
 router.get('/home', wrapAsync(async (req, res) => {
@@ -89,16 +95,15 @@ router.get('/home', wrapAsync(async (req, res) => {
 
     const feedData = fetchUserFeed.data;
 
-    // Process and analyze text frequency from the feedData
-    const feedText = feedData.data.map((item) => item.message).join(' ');
-    const tokens = preprocessText(feedText);
-    const n = 1; // for bigrams
-    const minOccurrences = 5;
-    const mostCommonWords = analyzeTextFrequency(tokens, n, minOccurrences);
+   // Process and analyze text frequency from the feedData
+  const feedText = feedData.data.map((item) => item.message).join(' ');
+  const tokens = preprocessText(feedText);
+  const minOccurrences = 5;
+  const mostCommonWords = analyzeTextFrequency(tokens, minOccurrences);
 
-    // Analyze the sentiment of the text using the sentiment library
-    const sentiment = new Sentiment();
-    const sentimentResult = sentiment.analyze(feedText);
+  // Analyze the sentiment of the text using the sentiment library
+  const sentiment = new Sentiment();
+  const sentimentResult = sentiment.analyze(feedText);
 
     res.render('./homepage', {
       userData,
