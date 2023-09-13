@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Hello</h1>
+
+    <h2>User Data</h2>
+    <% if (userData) { %>
+      <div class="user-data">
+        <p class="user-data-field">Name: <%= userData.name %></p>
+        <p class="user-data-field">Email: <%= userData.email %></p>
+        <p class="user-data-field">Birthday: <%= userData.birthday %></p>
+        <p class="user-data-field">Gender: <%= userData.gender %></p>
+        <% if (userData.hometown) { %>
+          <p class="user-data-field">Hometown: <%= userData.hometown.name %></p>
+        <% } %>
+        <p class="user-data-field">
+          Link: <a href="<%= userData.link %>" target="_blank" rel="noopener noreferrer"><%= userData.link %></a>
+        </p>
+        <% if (userData.age_range && userData.age_range.min && userData.age_range.max) { %>
+          <p class="user-data-field">Age Range: <%= userData.age_range.min %> - <%= userData.age_range.max %></p>
+        <% } else { %>
+          <p class="user-data-field">Age Range: Not specified</p>
+        <% } %>
+      </div>
+    <% } else { %>
+      <p>Loading user data...</p>
+    <% } %>
+</body>
+</html>
