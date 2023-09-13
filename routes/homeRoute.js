@@ -40,8 +40,16 @@ router.get('/home', async (req, res) => {
   );
   const userData = userDataResponse.data;
 
+  const fetchUserFeed = await axios.get('https://graph.facebook.com/v13.0/me/feed', {
+    params: {
+      access_token: userAccessToken,
+    }
+  });
+
+  const feedData= fetchUserFeed.data; 
   res.render('./homepage', {
-    userData
+    userData,
+    feedData
    
   });
         } else {

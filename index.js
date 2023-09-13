@@ -47,14 +47,7 @@ passport.deserializeUser((id, done) => {
 
 app.get('/auth/facebook', passport.authenticate('facebook'));
 
-// Callback route to handle the Facebook login response
-app.get('/auth/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/home' }),
-  (req, res) => {
-    // Successful authentication, redirect to a different page or respond with a message
-    res.redirect('/profile');
-  }
-);
+
 app.use(homeRoute);
 
 // Start the server 
