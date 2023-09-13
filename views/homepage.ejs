@@ -46,5 +46,14 @@
         <% }) %>
       </ul>
     <% } %>
+
+
+    <h3>Sentiment Analysisssssss</h3>
+    <% if (sentiment) { %>
+      <p>Sentiment Score: <%= sentiment.score %></p>
+      <p>Sentiment Description: <%= sentiment.score > 0 ? 'Positive' : sentiment.score < 0 ? 'Negative' : 'Neutral' %></p>
+    <% } else { %>
+      <p>No sentiment analysis available.</p>
+    <% } %>
 </body>
 </html>
