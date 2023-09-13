@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Social MS</title>
 </head>
 <body>
     <h1>Hello</h1>
@@ -32,10 +32,19 @@
     <% } %>
 
     <h3>Feed Data</h3>
-    <% if(feedData.data) {%>
-      <% feedData.data.map(({message}) => { %>
+    <% if (feedData.data) { %>
+      <% feedData.data.map(({ message }) => { %>
         <p><%= message %></p>
       <% }) %>
-      <% } %>
+    <% } %>
+
+    <h3>Most Common Words in Feed</h3>
+    <% if (mostCommonWords) { %>
+      <ul>
+        <% mostCommonWords.forEach((word) => { %>
+          <li><%= word[0] %>: <%= word[1] %> times</li>
+        <% }) %>
+      </ul>
+    <% } %>
 </body>
 </html>
