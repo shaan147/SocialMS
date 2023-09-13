@@ -1,3 +1,6 @@
+if(process.env.NODE_ENV !== "production"){
+  require('dotenv').config();
+}
 const express = require('express');
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
@@ -22,8 +25,8 @@ app.use(passport.session());
 
 // Define the Facebook Strategy
 passport.use(new FacebookStrategy({
-  clientID: '318689430818400',
-  clientSecret: '94735085b45d7ac23219450ffc0f7384',
+  clientID: process.env.APP_ID,
+  clientSecret: process.env.APP_SECRET,
   callbackURL: 'http://localhost:3001/home'
 }, (accessToken, refreshToken, profile, done) => {
 

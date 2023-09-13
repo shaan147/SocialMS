@@ -8,8 +8,8 @@ router.get('/home', async (req, res) => {
         if (!code) {
             return res.status(400).send('Code not provided');
         }
-        const appId = '318689430818400';
-        const appSecret = '94735085b45d7ac23219450ffc0f7384';
+        const appId = process.env.APP_ID;
+        const appSecret = process.env.APP_SECRET;
         const redirectURI = 'http://localhost:3001/home';
         // Make a request to exchange the code for an access token
         const response = await axios.get(`https://graph.facebook.com/v6.0/oauth/access_token`, {
