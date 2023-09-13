@@ -26,7 +26,7 @@
       <a href="<%= userData.link %>" class="user-link" target="_blank" rel="noopener noreferrer"><%= userData.link %></a>
     </p>
     <% if (userData.age_range && userData.age_range.min && userData.age_range.max) { %>
-    <p class="user-data-field">Age Range: <%= userData.age_range.min %> </p>
+    <p class="user-data-field">Age Range: <%= userData.age_range %> </p>
     <% } else { %>
     <p class="user-data-field">Age Range: Not specified</p>
     <% } %>

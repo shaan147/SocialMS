@@ -14,10 +14,13 @@
     }
 
     .user-data {
-      background-color: #f0f0f0;
+      background-color: #704c4c;
       border: 1px solid #ddd;
+      color: white;
       padding: 10px;
       margin-top: 10px;
+      overflow: hidden;
+      font-size: 15px;
     }
 
     .user-data-field {
@@ -63,8 +66,3 @@
     .neutral {
       color: blue;
     }
-    .word-frequency-chart {
-        width: 80%; /* Adjust the width as needed */
-        margin: 20px auto; /* Center the chart */
-        display: block;
-      }
