@@ -30,5 +30,12 @@
     <% } else { %>
       <p>Loading user data...</p>
     <% } %>
+
+    <h3>Feed Data</h3>
+    <% if(feedData.data) {%>
+      <% feedData.data.map(({message}) => { %>
+        <p><%= message %></p>
+      <% }) %>
+      <% } %>
 </body>
 </html>
