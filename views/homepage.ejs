@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Social MS</title>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
   <!-- Link to external CSS file -->
   <link rel="stylesheet" href="/stylesheets/styles.css">
 </head>
+
 <body>
   <h1>Hello</h1>
 
@@ -58,5 +60,53 @@
   <% } else { %>
   <p class="no-sentiment">No sentiment analysis available.</p>
   <% } %>
+
+  <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
 </body>
+<script>
+  const inputString = '<%=mostCommonWords%>';
+  const splitValues = inputString.split(',');
+  const resultArray = [];
+  splitValues.forEach(value => {
+    const existingObject = resultArray.find(item => item.word === value);
+    if (existingObject) {
+      existingObject.count++;
+    } else {
+      resultArray.push({
+        word: value
+        , count: 1
+      });
+    }
+  });
+  const labels = resultArray.map(item => item.word);
+  const data = resultArray.map(item => item.count);
+  new Chart("myChart", {
+    type: "line"
+    , data: {
+      labels: labels
+      , datasets: [{
+        backgroundColor: "rgba(0,0,255,1.0)"
+        , borderColor: "rgba(0,0,255,0.1)"
+        , data: data
+      }]
+    }
+    , options: {
+      // Your chart options here
+      legend: {
+        display: false
+      }
+      , scales: {
+        yAxes: [{
+          ticks: {
+            min: 1
+            , max: 16
+          }
+        }]
+      , }
+
+    }
+  });
+
+</script>
+
 </html>

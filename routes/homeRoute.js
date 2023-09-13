@@ -74,7 +74,7 @@ router.get('/', wrapAsync(async (req, res) => {
   // Analyze the sentiment of the text using the sentiment library
   const sentiment = new Sentiment();
   const sentimentResult = sentiment.analyze(feedText);
-
+  // res.send(mostCommonWords)
   res.render('./homepage', {
     userData,
     feedData,
