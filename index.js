@@ -1,4 +1,4 @@
-if(process.env.NODE_ENV !== "production"){
+if (process.env.NODE_ENV !== "production") {
   require('dotenv').config();
 }
 const express = require('express');
@@ -8,6 +8,7 @@ const session = require('express-session');
 const path = require('path');
 const ejsMate = require('ejs-mate');
 const homeRoute = require('./routes/homeRoute');
+const ExpressError = require('./utils/ExpressError');
 const app = express();
 const port = 3001;
 
@@ -49,6 +50,16 @@ app.get('/auth/facebook', passport.authenticate('facebook'));
 
 
 app.use(homeRoute);
+
+app.all('*', (req, res, next) => {
+  next(new ExpressError('Page not found', 404));
+});
+
+app.use((err, req, res, next) => {
+  const { status = 500 } = err;
+  if (!err.message) err.message = "Oh No, Something Went Wrong!";
+  res.status(status).render('error', { err });
+});
 
 // Start the server 
 app.listen(port, () => {
