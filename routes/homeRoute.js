@@ -88,7 +88,7 @@ router.get('/home', async (req, res) => {
     }
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).send('Internal server error');
+   res.redirect('/auth/facebook')
   }
 });
 
