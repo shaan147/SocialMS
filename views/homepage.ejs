@@ -28,7 +28,7 @@
       <a href="<%= userData.link %>" class="user-link" target="_blank" rel="noopener noreferrer"><%= userData.link %></a>
     </p>
     <% if (userData.age_range && userData.age_range.min && userData.age_range.max) { %>
-    <p class="user-data-field">Age Range: <%= userData.age_range.min %> - <%= userData.age_range.max %></p>
+    <p class="user-data-field">Age Range: <%= userData.age_range.min %> </p>
     <% } else { %>
     <p class="user-data-field">Age Range: Not specified</p>
     <% } %>
@@ -37,10 +37,6 @@
   <p>Loading user data...</p>
   <% } %>
 
-  <!-- <h3 class="section-title">Feed Data</h3>
-  <% if (feedData.data) { %> <% feedData.data.map(({ message }) => { %>
-  <p><%= message %></p>
-  <% }) %> <% } %> -->
 
   <h3 class="section-title">Most Common Words in Feed</h3>
   <% if (mostCommonWords) { %>
@@ -51,7 +47,7 @@
   </ul>
   <% } %>
 
-  <h3 class="section-title">Sentiment Analysisssssss</h3>
+  <h3 class="section-title">Sentiment Analysis</h3>
   <% if (sentiment) { %>
   <p class="sentiment-score">Sentiment Score: <%= sentiment.score %></p>
   <p class="sentiment-description">

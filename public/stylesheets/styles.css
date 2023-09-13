@@ -63,3 +63,8 @@
     .neutral {
       color: blue;
     }
+    .word-frequency-chart {
+        width: 80%; /* Adjust the width as needed */
+        margin: 20px auto; /* Center the chart */
+        display: block;
+      }
