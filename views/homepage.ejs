@@ -37,16 +37,18 @@
   <p>Loading user data...</p>
   <% } %>
 
-  <h3 class="section-title">Most Common Words in Feed</h3>
+<!-- <h3 class="section-title">Most Common Words in Feed</h3>
   <% if (mostCommonWords) { %>
-  <ul class="common-words">
-    <% mostCommonWords.forEach((word) => { %>
-    <li>User has used <strong> <%= word.word %></strong> <%= word.count %> times</li> <!-- Display the word and its count -->
-    <% }) %>
-  </ul>
-  <% } %>
-
-  <h3 class="section-title">Sentiment Analysis</h3>
+    <ul class="common-words">
+      <% mostCommonWords.forEach((word) => { %>
+      <li>User has used <strong> <%= word.word %></strong> <%= word.count %> times</li>
+      <% }) %>
+    </ul>
+    <% } %> -->
+<!-- Create a canvas for the line chart -->
+<canvas id="wordCountChart" style="width:100%; max-width:1200px; height:500px; font-size: 1.2rem;"></canvas>
+<br> <br>
+  <!-- <h3 class="section-title">Sentiment Analysis</h3>
   <% if (sentiment) { %>
   <p class="sentiment-score">Sentiment Score: <%= sentiment.score %></p>
   <p class="sentiment-description">
@@ -54,38 +56,70 @@
   </p>
   <% } else { %>
   <p class="no-sentiment">No sentiment analysis available.</p>
-  <% } %>
-
-  <!-- Create a canvas for the line chart -->
-  <canvas id="wordCountChart" style="width:100%;max-width:800px;height:400px;"></canvas>
+  <% } %> -->
+  <canvas id="sentimentChart"></canvas>
+  
 </body>
 <script>
-  const mostCommonWordsData = <%- JSON.stringify(mostCommonWords) %> 
+  const mostCommonWordsData = <%- JSON.stringify(mostCommonWords) %>; 
 
-  // rest of your code...
-
-  new Chart("wordCountChart", {
-    type: "line",
-    data: {
-      labels: mostCommonWordsData.map(item => item.word),
-      datasets: [{
-        label: 'Word Count',
-        backgroundColor: "rgba(0,0,255,1.0)",
-        borderColor: "rgba(0,0,255,0.1)",
-        data: mostCommonWordsData.map(item => item.count)
+new Chart("wordCountChart", {
+  type: "line",
+  data: {
+    labels: mostCommonWordsData.map(item => item.word),
+    datasets: [{
+      label: 'Word Count',
+      backgroundColor: "rgba(0,0,255,0.1)", // This is the fill color under the line
+      borderColor: "rgba(0,0,255,1.0)", // This is the color of the line
+      pointBackgroundColor: "rgba(255,0,0,1.0)", // This is the color of the points
+      pointBorderColor: "rgba(255,0,0,1.0)", // This is the border color of the points
+      data: mostCommonWordsData.map(item => item.count)
+    }]
+  },
+  options: {
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero: true,
+          max: Math.max(...mostCommonWordsData.map(item => item.count)),
+          fontSize: 17
+        }
+      }],
+      xAxes: [{
+        ticks: {
+          fontSize: 17
+        }
       }]
     },
-    options: {
-      scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: true,
-            max: Math.max(...mostCommonWordsData.map(item => item.count)), 
-          }
-        }]
+    legend: {
+      labels: {
+        fontSize: 17
       }
     }
-  });
+  }
+});
+
+const sentiment = <%- JSON.stringify(sentiment) %>;
+const sentimentScore = sentiment.score;
+
+const sentimentChartData = {
+  labels: ['Positive Sentiment', 'Negative Sentiment'],
+  datasets: [{
+    data: [sentimentScore, 100 - sentimentScore],
+    backgroundColor: ['rgba(255, 255, 0, 1.0)', 'rgba(255, 0, 0, 1.0)']
+  }]
+};
+
+const sentimentChartOptions = {
+  responsive: true,
+  maintainAspectRatio: false
+};
+
+new Chart("sentimentChart", {
+  type: "pie",
+  data: sentimentChartData,
+  options: sentimentChartOptions
+});
 </script>
 
 </html>
