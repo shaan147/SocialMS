@@ -32,12 +32,17 @@ function analyzeTextFrequency(textData, minOccurrences) {
     wordFrequency[word] = (wordFrequency[word] || 0) + 1;
   });
 
-  // Filter words that occur at least 'minOccurrences' times
-  const mostCommonWords = Object.keys(wordFrequency).filter(
-    (word) => wordFrequency[word] >= minOccurrences
+  // Sort the wordFrequency object by frequency in descending order
+  const sortedWordFrequency = Object.entries(wordFrequency).sort(
+    (a, b) => b[1] - a[1]
   );
 
-  return mostCommonWords;
+  // Filter words that occur at least 'minOccurrences' times
+  const mostCommonWords = sortedWordFrequency
+    .filter((entry) => entry[1] >= minOccurrences)
+    .map((entry) => ({word: entry[0], count: entry[1]}));
+
+  return { mostCommonWords, wordFrequency }; // Return both most common words and word frequency
 }
 
 router.get('/', wrapAsync(async (req, res) => {
@@ -69,7 +74,7 @@ router.get('/', wrapAsync(async (req, res) => {
   const feedText = feedData.data.map((item) => item.message).join(' ');
   const tokens = preprocessText(feedText);
   const minOccurrences = 5;
-  const mostCommonWords = analyzeTextFrequency(tokens, minOccurrences);
+  const { mostCommonWords, wordFrequency } = analyzeTextFrequency(tokens, minOccurrences);
 
   // Analyze the sentiment of the text using the sentiment library
   const sentiment = new Sentiment();
@@ -78,11 +83,11 @@ router.get('/', wrapAsync(async (req, res) => {
   res.render('./homepage', {
     userData,
     feedData,
-    mostCommonWords, // Pass the most common words to the template
-    sentiment: sentimentResult, // Pass the sentiment analysis result to the template
+    mostCommonWords,
+    wordFrequency,  
+    sentiment: sentimentResult, 
   });
 }));
-
 
 // Your existing /home route
 router.get('/home', wrapAsync(async (req, res) => {
@@ -116,7 +121,5 @@ router.get('/home', wrapAsync(async (req, res) => {
     res.status(400).send('Failed to obtain user access token');
   }
 }));
-
-
 
 module.exports = router;

@@ -37,12 +37,11 @@
   <p>Loading user data...</p>
   <% } %>
 
-
   <h3 class="section-title">Most Common Words in Feed</h3>
   <% if (mostCommonWords) { %>
   <ul class="common-words">
     <% mostCommonWords.forEach((word) => { %>
-    <li><%= word %></li>
+    <li>User has used <strong> <%= word.word %></strong> <%= word.count %> times</li> <!-- Display the word and its count -->
     <% }) %>
   </ul>
   <% } %>
@@ -57,52 +56,36 @@
   <p class="no-sentiment">No sentiment analysis available.</p>
   <% } %>
 
-  <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+  <!-- Create a canvas for the line chart -->
+  <canvas id="wordCountChart" style="width:100%;max-width:800px;height:400px;"></canvas>
 </body>
 <script>
-  const inputString = '<%=mostCommonWords%>';
-  const splitValues = inputString.split(',');
-  const resultArray = [];
-  splitValues.forEach(value => {
-    const existingObject = resultArray.find(item => item.word === value);
-    if (existingObject) {
-      existingObject.count++;
-    } else {
-      resultArray.push({
-        word: value
-        , count: 1
-      });
-    }
-  });
-  const labels = resultArray.map(item => item.word);
-  const data = resultArray.map(item => item.count);
-  new Chart("myChart", {
-    type: "line"
-    , data: {
-      labels: labels
-      , datasets: [{
-        backgroundColor: "rgba(0,0,255,1.0)"
-        , borderColor: "rgba(0,0,255,0.1)"
-        , data: data
+  const mostCommonWordsData = <%- JSON.stringify(mostCommonWords) %> 
+
+  // rest of your code...
+
+  new Chart("wordCountChart", {
+    type: "line",
+    data: {
+      labels: mostCommonWordsData.map(item => item.word),
+      datasets: [{
+        label: 'Word Count',
+        backgroundColor: "rgba(0,0,255,1.0)",
+        borderColor: "rgba(0,0,255,0.1)",
+        data: mostCommonWordsData.map(item => item.count)
       }]
-    }
-    , options: {
-      // Your chart options here
-      legend: {
-        display: false
-      }
-      , scales: {
+    },
+    options: {
+      scales: {
         yAxes: [{
           ticks: {
-            min: 1
-            , max: 16
+            beginAtZero: true,
+            max: Math.max(...mostCommonWordsData.map(item => item.count)), 
           }
         }]
-      , }
-
+      }
     }
   });
-
 </script>
 
 </html>
