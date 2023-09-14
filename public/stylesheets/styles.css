@@ -12,6 +12,11 @@
     h2 {
       margin-top: 20px;
     }
+.cd{
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
 
     .user-data {
       background-color: #ececec;
@@ -25,8 +30,23 @@
 
     .user-data-field {
       margin: 5px 0;
-    }
+  
 
+    }
+/* Add hover effect to user data */
+.user-data:hover {
+  background-color: #000000;
+  transition: background-color 0.3s;
+  color: white;
+}
+.hover-effect-text:hover {
+  color: #0056b3; /* Change text color on hover */
+  /* You can add more styles for the hover effect here, such as underlining or background color change */
+}
+/* Style links on hover */
+.user-data-field a:hover {
+  color: #0056b3; /* Change link color on hover */
+}
     .user-data-field a {
       text-decoration: none;
       color: #007bff;
@@ -43,6 +63,11 @@
 
     li {
       margin: 5px 0;
+      text-align: center;
     }
-
+.section-title{
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
    

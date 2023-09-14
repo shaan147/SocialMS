@@ -14,35 +14,79 @@
 
 
   <h2 class="section-title">User Data</h2>
-  <div> 
+  <div class="cd"> 
   <% if (userData) { %>
   <div class="user-data">
-    <p class="user-data-field">Name: <%= userData.name %></p>
-    <p class="user-data-field">Email: <%= userData.email %></p>
-    <p class="user-data-field">Birthday: <%= userData.birthday %></p>
-    <p class="user-data-field">Gender: <%= userData.gender %></p>
+    <img src="<%= userData.picture.data.url %>" alt="Profile Picture">
+    <p class="user-data-field hover-effect-text">Name: <%= userData.name %></p>
+    <p class="user-data-field hover-effect-text">Email: <%= userData.email %></p>
+    <p class="user-data-field hover-effect-text">Birthday: <%= userData.birthday %></p>
+    <p class="user-data-field hover-effect-text">Gender: <%= userData.gender %></p>
     <% if (userData.hometown) { %>
-    <p class="user-data-field">Hometown: <%= userData.hometown.name %></p>
+    <p class="user-data-field hover-effect-text">Hometown: <%= userData.hometown.name %></p>
     <% } %>
-    <p class="user-data-field">
+    <p class="user-data-field hover-effect-text">
       Link:
-      <a href="<%= userData.link %>" class="user-link" target="_blank" rel="noopener noreferrer"><%= userData.link %></a>
+      <a href="<%= userData.link %>" class="user-link" target="_blank" rel="noopener noreferrer">
+        <% 
+        const linkText = userData.link.length > 30 ? userData.link.slice(0, 30) + "..." : userData.link;
+        %>
+        <span title="<%= userData.link %>"><%= linkText %></span>
+      </a>
     </p>
     <% if (userData.age_range && userData.age_range.min && userData.age_range.max) { %>
-    <p class="user-data-field">Age Range: <%= userData.age_range %> </p>
+    <p class="user-data-field hover-effect-text">Age Range: <%= userData.age_range %> </p>
     <% } else { %>
-    <p class="user-data-field">Age Range: Not specified</p>
+    <p class="user-data-field hover-effect-text">Age Range: Not specified</p>
+    <% } %>
+    <p class="user-data-field hover-effect-text">Favorite Team: 
+      <% if (userData.favorite_teams && userData.favorite_teams.length > 0) { %>
+        <%= userData.favorite_teams.map(team => team.name).join(', ') %>
+      <% } else { %>
+        Not specified
+      <% } %>
+    </p>
+    <p class="user-data-field hover-effect-text">Favorite Athletes: 
+      <% if (userData.favorite_athletes && userData.favorite_athletes.length > 0) { %>
+        <%= userData.favorite_athletes.map(athlete => athlete.name).join(', ') %>
+      <% } else { %>
+        Not specified
+      <% } %>
+    </p>
+    <p class="user-data-field hover-effect-text">Businesses: 
+      <% if (userData.businesses && userData.businesses.data.length > 0) { %>
+        <%= userData.businesses.data.map(business => business.name).join(', ') %>
+      <% } else { %>
+        Not specified
+      <% } %>
+    </p>
+    <% if (userData.photo && userData.photos.length > 0) { %>
+      <div class="user-photos">
+        <% userPhotos.forEach((photos) => { %>
+          <img src="<%= photos.picture %>" alt="User Photo">
+        <% }); %>
+      </div>
+    <% } else { %>
+      <p>No photos found.</p>
     <% } %>
   </div>
   <% } else { %>
   <p>Loading user data...</p>
   <% } %>
 </div>
-
   <h2 class="section-title">Area of Interest</h2>
   <% if (interest && interest.length > 0) { %>
     <ul>
       <li><%= interest %></li>
+    </ul>
+  <% } else { %>
+    <p>No interests detected.</p>
+  <% } %>
+  <h2 class="section-title">Area of Interest from groups</h2>
+
+  <% if (interestsFromGroups && interestsFromGroups.length > 0) { %>
+    <ul>
+      <li><%= interestsFromGroups %></li>
     </ul>
   <% } else { %>
     <p>No interests detected.</p>

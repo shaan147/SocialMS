@@ -38,7 +38,7 @@ router.get('/', wrapAsync(async (req, res) => {
     {
       params: {
         fields:
-          'id,name,email,birthday,age_range,gender,hometown,link,likes',
+          'id,name,email,birthday,age_range,gender,hometown,link,likes,groups,picture,favorite_teams,favorite_athletes,businesses,photos',
         access_token: req.session.userAccessToken,
       },
     }
@@ -58,11 +58,12 @@ router.get('/', wrapAsync(async (req, res) => {
 
   // Extract liked pages data
   const likedPagesData = userData.likes.data;
-
+  const likedGroupsData = userData.groups.data;
   // Preprocess liked page names and descriptions
   const tokenizer = new natural.WordTokenizer();
   const stopwords = ["the", "and", "of", "in", "to", "a", "for", "on", "with", "as", "by", "an", "at"];
   const pageWords = [];
+  const groupWords = [];
 
   likedPagesData.forEach((page) => {
     const text = (page.name + ' ' + page.description).toLowerCase();
@@ -70,7 +71,12 @@ router.get('/', wrapAsync(async (req, res) => {
     const filteredTokens = tokens.filter((token) => !stopwords.includes(token));
     pageWords.push(...filteredTokens);
   });
-
+  likedGroupsData.forEach((group) => {
+    const text = (group.name + ' ' + group.description).toLowerCase();
+    const tokens = tokenizer.tokenize(text);
+    const filteredTokens = tokens.filter((token) => !stopwords.includes(token));
+    groupWords.push(...filteredTokens);
+  });
   // Perform NLP analysis (TF-IDF in this example)
   const TfIdf = natural.TfIdf;
   const tfidf = new TfIdf();
@@ -78,16 +84,24 @@ router.get('/', wrapAsync(async (req, res) => {
   pageWords.forEach((word) => {
     tfidf.addDocument(pageWords); // Add documents for analysis
   });
-
+  groupWords.forEach((word) => {
+    tfidf.addDocument(groupWords); // Add documents for analysis
+  });
   const interests = [];
-
+  const interestsFromGroups = [];
   tfidf.listTerms(0 /* Document index to analyze */).forEach((item) => {
     // You can set a threshold for term importance to filter results
     if (item.tfidf > 0.1) {
       interests.push(item.term);
     }
   });
-
+  tfidf.listTerms(0 /* Document index to analyze */).forEach((item) => {
+    // You can set a threshold for term importance to filter results
+    if (item.tfidf > 4) {
+      interestsFromGroups.push(item.term);
+    }
+  });
+  const groupinterest = interestsFromGroups[2];
   // Get the top three interests
   // const topInterests = interests.slice(0, 3);
   const topInterest = interests[1];
@@ -107,7 +121,9 @@ router.get('/', wrapAsync(async (req, res) => {
     mostCommonWords,
     wordFrequency,
     sentiment: sentimentResult,
-    interest: topInterest, // Pass the user interests to the view
+    interest: topInterest, 
+  interestsFromGroups:groupinterest,
+
   });
 }));
 
