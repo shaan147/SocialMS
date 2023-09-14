@@ -11,9 +11,10 @@
 </head>
 
 <body>
-  <h1>Hello</h1>
+
 
   <h2 class="section-title">User Data</h2>
+  <div> 
   <% if (userData) { %>
   <div class="user-data">
     <p class="user-data-field">Name: <%= userData.name %></p>
@@ -36,7 +37,16 @@
   <% } else { %>
   <p>Loading user data...</p>
   <% } %>
+</div>
 
+  <h2 class="section-title">Area of Interest</h2>
+  <% if (interest && interest.length > 0) { %>
+    <ul>
+      <li><%= interest %></li>
+    </ul>
+  <% } else { %>
+    <p>No interests detected.</p>
+  <% } %>
   <h2 style="display: flex; justify-content: center;">User's Words Analysis</h2>
   <canvas id="wordCountChart" style="display: flex; justify-content: center; width:100%; max-width:1200px; height:500px; font-size: 1.2rem;"></canvas>
   <br> <br>

@@ -11,7 +11,7 @@ const tokenizer = new natural.WordTokenizer();
 function preprocessText(text) {
   text = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').toLowerCase();
   const tokens = tokenizer.tokenize(text);
-  const stopwords = ["the","da" ,"i","s","is" ,"and", "of", "in", "to", "a", "for", "on", "with", "as", "by", "an", "at"];
+  const stopwords = ["the", "da", "i", "s", "is", "and", "of", "in", "to", "a", "for", "on", "with", "as", "by", "an", "at"];
   const filteredTokens = tokens.filter((token) => !stopwords.includes(token));
   return filteredTokens;
 }
@@ -26,9 +26,9 @@ function analyzeTextFrequency(textData, minOccurrences) {
   );
   const mostCommonWords = sortedWordFrequency
     .filter((entry) => entry[1] >= minOccurrences)
-    .map((entry) => ({word: entry[0], count: entry[1]}));
+    .map((entry) => ({ word: entry[0], count: entry[1] }));
 
-  return { mostCommonWords, wordFrequency }; 
+  return { mostCommonWords, wordFrequency };
 }
 
 router.get('/', wrapAsync(async (req, res) => {
@@ -38,7 +38,7 @@ router.get('/', wrapAsync(async (req, res) => {
     {
       params: {
         fields:
-          'id,name,email,birthday,age_range,gender,hometown,link',
+          'id,name,email,birthday,age_range,gender,hometown,link,likes',
         access_token: req.session.userAccessToken,
       },
     }
@@ -56,6 +56,43 @@ router.get('/', wrapAsync(async (req, res) => {
 
   const feedData = fetchUserFeed.data;
 
+  // Extract liked pages data
+  const likedPagesData = userData.likes.data;
+
+  // Preprocess liked page names and descriptions
+  const tokenizer = new natural.WordTokenizer();
+  const stopwords = ["the", "and", "of", "in", "to", "a", "for", "on", "with", "as", "by", "an", "at"];
+  const pageWords = [];
+
+  likedPagesData.forEach((page) => {
+    const text = (page.name + ' ' + page.description).toLowerCase();
+    const tokens = tokenizer.tokenize(text);
+    const filteredTokens = tokens.filter((token) => !stopwords.includes(token));
+    pageWords.push(...filteredTokens);
+  });
+
+  // Perform NLP analysis (TF-IDF in this example)
+  const TfIdf = natural.TfIdf;
+  const tfidf = new TfIdf();
+
+  pageWords.forEach((word) => {
+    tfidf.addDocument(pageWords); // Add documents for analysis
+  });
+
+  const interests = [];
+
+  tfidf.listTerms(0 /* Document index to analyze */).forEach((item) => {
+    // You can set a threshold for term importance to filter results
+    if (item.tfidf > 0.1) {
+      interests.push(item.term);
+    }
+  });
+
+  // Get the top three interests
+  // const topInterests = interests.slice(0, 3);
+  const topInterest = interests[1];
+
+  // Analyze the user's feed data as before
   const feedText = feedData.data.map((item) => item.message).join(' ');
   const tokens = preprocessText(feedText);
   const minOccurrences = 5;
@@ -63,12 +100,14 @@ router.get('/', wrapAsync(async (req, res) => {
 
   const sentiment = new Sentiment();
   const sentimentResult = sentiment.analyze(feedText);
+
   res.render('./homepage', {
     userData,
     feedData,
     mostCommonWords,
-    wordFrequency,  
-    sentiment: sentimentResult, 
+    wordFrequency,
+    sentiment: sentimentResult,
+    interest: topInterest, // Pass the user interests to the view
   });
 }));
 
