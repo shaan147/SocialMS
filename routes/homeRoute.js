@@ -6,43 +6,29 @@ const router = express.Router();
 const NGrams = natural;
 const wrapAsync = require('../utils/wrapAsync');
 
-// Import the tokenizer and frequency analysis functions
 const tokenizer = new natural.WordTokenizer();
 
 function preprocessText(text) {
-  // Remove punctuation and lowercase the text
   text = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').toLowerCase();
-
-  // Tokenize the text
   const tokens = tokenizer.tokenize(text);
-
-  // Define a list of common stopwords
-  const stopwords = ["the", "and", "of", "in", "to", "a", "for", "on", "with", "as", "by", "an", "at"];
-
-  // Filter out stopwords
+  const stopwords = ["the","da" ,"i","s","is" ,"and", "of", "in", "to", "a", "for", "on", "with", "as", "by", "an", "at"];
   const filteredTokens = tokens.filter((token) => !stopwords.includes(token));
-
   return filteredTokens;
 }
 
 function analyzeTextFrequency(textData, minOccurrences) {
-  // Calculate the frequency of each word
   const wordFrequency = {};
   textData.forEach((word) => {
     wordFrequency[word] = (wordFrequency[word] || 0) + 1;
   });
-
-  // Sort the wordFrequency object by frequency in descending order
   const sortedWordFrequency = Object.entries(wordFrequency).sort(
     (a, b) => b[1] - a[1]
   );
-
-  // Filter words that occur at least 'minOccurrences' times
   const mostCommonWords = sortedWordFrequency
     .filter((entry) => entry[1] >= minOccurrences)
     .map((entry) => ({word: entry[0], count: entry[1]}));
 
-  return { mostCommonWords, wordFrequency }; // Return both most common words and word frequency
+  return { mostCommonWords, wordFrequency }; 
 }
 
 router.get('/', wrapAsync(async (req, res) => {
@@ -70,16 +56,13 @@ router.get('/', wrapAsync(async (req, res) => {
 
   const feedData = fetchUserFeed.data;
 
-  // Process and analyze text frequency from the feedData
   const feedText = feedData.data.map((item) => item.message).join(' ');
   const tokens = preprocessText(feedText);
   const minOccurrences = 5;
   const { mostCommonWords, wordFrequency } = analyzeTextFrequency(tokens, minOccurrences);
 
-  // Analyze the sentiment of the text using the sentiment library
   const sentiment = new Sentiment();
   const sentimentResult = sentiment.analyze(feedText);
-  // res.send(mostCommonWords)
   res.render('./homepage', {
     userData,
     feedData,
@@ -89,7 +72,6 @@ router.get('/', wrapAsync(async (req, res) => {
   });
 }));
 
-// Your existing /home route
 router.get('/home', wrapAsync(async (req, res) => {
   const { code } = req.query;
   if (!code) {
@@ -99,7 +81,6 @@ router.get('/home', wrapAsync(async (req, res) => {
   const appSecret = process.env.APP_SECRET;
   const redirectURI = 'http://localhost:3001/home';
 
-  // Make a request to exchange the code for an access token
   const response = await axios.get(
     `https://graph.facebook.com/v6.0/oauth/access_token`,
     {
@@ -114,7 +95,6 @@ router.get('/home', wrapAsync(async (req, res) => {
 
   if (response.data.access_token) {
     const userAccessToken = response.data.access_token;
-    // You can use or store the access token as needed
     req.session.userAccessToken = userAccessToken;
     return res.redirect('/')
   } else {
