@@ -1,6 +1,7 @@
 if (process.env.NODE_ENV !== "production") {
   require('dotenv').config();
 }
+
 const express = require('express');
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;

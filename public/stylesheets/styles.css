@@ -1,73 +1,76 @@
 body {
-font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
 
-margin: 20px;
-padding: 0;
+  margin: 20px;
+  padding: 0;
 }
 
 h1 {
-text-align: center;
+  text-align: center;
 }
 
 h2 {
-margin-top: 20px;
+  margin-top: 20px;
 }
-.cd{
-display: flex;
-justify-content: center;
-text-align: center;
+
+.cd {
+  display: flex;
+  justify-content: center;
+  text-align: center;
 }
 
 .user-data {
-background-color: #ececec;
-border: 1px solid #ddd;
-color: rgb(0, 0, 0);
-padding: 10px;
-margin-top: 10px;
-overflow: hidden;
-font-size: 15px;
+  background-color: #ececec;
+  border: 1px solid #ddd;
+  color: rgb(0, 0, 0);
+  padding: 10px;
+  margin-top: 10px;
+  overflow: hidden;
+  font-size: 15px;
 }
 
 .user-data-field {
-margin: 5px 0;
-
-
+  margin: 5px 0;
 }
 
 .user-data:hover {
-background-color: #000000;
-transition: background-color 0.3s;
-color: white;
-font-weight: 500;
-font-size: 16px;
+  background-color: #000000;
+  transition: background-color 0.3s;
+  color: white;
+  font-weight: 500;
+  font-size: 16px;
 }
+
 .hover-effect-text:hover {
-color: #0056b3;
-transition: all;
+  color: #ffffff;
+  transition: all;
 }
+
 .user-data-field a:hover {
-color: #0056b3; /* Change link color on hover */
+  color: #ff6868;
+
 }
+
 .user-data-field a {
-text-decoration: none;
-color: #007bff;
+  text-decoration: none;
 }
 
 h3 {
-margin-top: 20px;
+  margin-top: 20px;
 }
 
 ul {
-list-style-type: none;
-padding: 0;
+  list-style-type: none;
+  padding: 0;
 }
 
 li {
-margin: 5px 0;
-text-align: center;
+  margin: 5px 0;
+  text-align: center;
 }
-.section-title{
-display: flex;
-justify-content: center;
-text-align: center;
+
+.section-title {
+  display: flex;
+  justify-content: center;
+  text-align: center;
 }

@@ -23,6 +23,7 @@
     "passport": "^0.6.0",
     "passport-facebook": "^3.0.0",
     "path": "^0.12.7",
-    "sentiment": "^5.0.2"
+    "sentiment": "^5.0.2",
+    "tesseract.js": "^4.1.2"
   }
 }

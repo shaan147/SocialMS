@@ -63,15 +63,22 @@
         Not specified
       <% } %>
     </p>
-    <% if (userData.photo && userData.photos.length > 0) { %>
+    <% if (albumsData.length > 0) { %>
       <div class="user-photos">
-        <% userPhotos.forEach((photos) => { %>
-          <img src="<%= photos.picture %>" alt="User Photo">
+        <% albumsData.forEach((album) => { %>
+          <% album.photos.data.forEach((photo) => { %>
+            <a href="<%= photo.images[0].source %>" target="_blank">
+              <img src="<%= photo.images[0].source %>" alt="User Photo" style="width: 50px; height: 50px;">
+            </a>
+          <% }); %>
         <% }); %>
+
       </div>
+
     <% } else { %>
       <p>No photos found.</p>
     <% } %>
+    
   </div>
   <% } else { %>
   <p>Loading user data...</p>
@@ -94,6 +101,7 @@
   <% } else { %>
     <p>No interests detected.</p>
   <% } %>
+  
   <h2 style="display: flex; justify-content: center;">User's Words Analysis</h2>
   <canvas id="wordCountChart" style="display: flex; justify-content: center; width:100%; max-width:1200px; height:500px; font-size: 1.2rem;"></canvas>
   <br> <br>

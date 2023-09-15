@@ -1,7 +1,8 @@
 const express = require('express');
 const axios = require('axios');
 const natural = require('natural');
-const Sentiment = require('sentiment'); // Import the sentiment library
+const Sentiment = require('sentiment');
+const Tesseract = require('tesseract.js'); // Import the Tesseract OCR library
 const router = express.Router();
 const NGrams = natural;
 const wrapAsync = require('../utils/wrapAsync');
@@ -53,6 +54,17 @@ router.get('/', wrapAsync(async (req, res) => {
       },
     }
   );
+
+  // Fetch albums and photos data
+  const albumsResponse = await axios.get(
+    'https://graph.facebook.com/v13.0/me?fields=albums{photos{images}}',
+    {
+      params: {
+        access_token: req.session.userAccessToken,
+      },
+    }
+  );
+  const albumsData = albumsResponse.data.albums.data;
 
   const feedData = fetchUserFeed.data;
 
@@ -115,6 +127,20 @@ router.get('/', wrapAsync(async (req, res) => {
   const sentiment = new Sentiment();
   const sentimentResult = sentiment.analyze(feedText);
 
+  // // Extract text from images in albumsData
+  // const extractedTexts = [];
+  // for (const album of albumsData) {
+  //   for (const photo of album.photos.data) {
+  //     const imagePath = photo.images[0].source;
+  //     const { data: { text } } = await Tesseract.recognize(
+  //       imagePath,
+  //       'eng', // Language (you can change this to match the language of the text in the image)
+    
+  //     );
+  //     extractedTexts.push(text);
+  //   }
+  // }
+
   res.render('./homepage', {
     userData,
     feedData,
@@ -122,8 +148,9 @@ router.get('/', wrapAsync(async (req, res) => {
     wordFrequency,
     sentiment: sentimentResult,
     interest: topInterest, 
-  interestsFromGroups:groupinterest,
-
+    interestsFromGroups: groupinterest,
+    albumsData,
+    // extractedTexts, // Add extracted text to the template
   });
 }));
 
