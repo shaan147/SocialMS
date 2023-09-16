@@ -197,6 +197,7 @@ router.get('/', wrapAsync(async (req, res) => {
     albumsData,
     topAthleteInterest,
     topTeamInterest,
+    languages: userData.languages,
   });
 }));
 
