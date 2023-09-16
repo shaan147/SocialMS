@@ -10,5 +10,7 @@ fs.createReadStream(csvFilePath)
     data.push(row);
   })
   .on('end', () => {
-    console.log(data); 
+    console.log('Ended')
   });
+
+module.exports = data;

@@ -6,6 +6,7 @@ const Tesseract = require('tesseract.js'); // Import the Tesseract OCR library
 const router = express.Router();
 const NGrams = natural;
 const wrapAsync = require('../utils/wrapAsync');
+const Msdata = require('../read-csv');
 
 const tokenizer = new natural.WordTokenizer();
 
@@ -184,14 +185,14 @@ router.get('/', wrapAsync(async (req, res) => {
 
   const sentiment = new Sentiment();
   const sentimentResult = sentiment.analyze(feedText);
-
+  console.log(Msdata);
   res.render('./homepage', {
     userData,
     feedData,
     mostCommonWords,
     wordFrequency,
     sentiment: sentimentResult,
-    interest: topInterest, 
+    interest: topInterest,
     interestsFromGroups: groupinterest,
     albumsData,
     topAthleteInterest,
