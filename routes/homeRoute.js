@@ -185,20 +185,28 @@ router.get('/', wrapAsync(async (req, res) => {
 
   const sentiment = new Sentiment();
   const sentimentResult = sentiment.analyze(feedText);
-  console.log(Msdata);
-  res.render('./homepage', {
-    userData,
-    feedData,
-    mostCommonWords,
-    wordFrequency,
-    sentiment: sentimentResult,
-    interest: topInterest,
-    interestsFromGroups: groupinterest,
-    albumsData,
-    topAthleteInterest,
-    topTeamInterest,
-    languages: userData.languages,
-  });
+
+  // Implementing the CSV file here
+  // Msdata.map(({ Hometown, Language, Religion, LivesIn, Result }) => {
+  //   // if (userData.hometown.name === Hometown) {
+  //   //   // console.log(Result)
+  //   // }
+  // })
+  res.send(userData)
+  // console.log(Msdata);
+  // res.render('./homepage', {
+  //   userData,
+  //   feedData,
+  //   mostCommonWords,
+  //   wordFrequency,
+  //   sentiment: sentimentResult,
+  //   interest: topInterest,
+  //   interestsFromGroups: groupinterest,
+  //   albumsData,
+  //   topAthleteInterest,
+  //   topTeamInterest,
+  //   languages: userData.languages,
+  // });
 }));
 
 router.get('/home', wrapAsync(async (req, res) => {
