@@ -9,61 +9,62 @@
   <!-- Link to external CSS file -->
   <link rel="stylesheet" href="/stylesheets/styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-
   <h2 class="section-title">User Data</h2>
-  <div class="cd"> 
-  <% if (userData) { %>
-  <div class="user-data">
-    <img src="<%= userData.picture.data.url %>" alt="Profile Picture">
-    <p class="user-data-field hover-effect-text">Name: <%= userData.name %></p>
-    <p class="user-data-field hover-effect-text">Email: <%= userData.email %></p>
-    <p class="user-data-field hover-effect-text">Birthday: <%= userData.birthday %></p>
-    <p class="user-data-field hover-effect-text">Gender: <%= userData.gender %></p>
-    <% if (userData.hometown) { %>
-    <p class="user-data-field hover-effect-text">Hometown: <%= userData.hometown.name %></p>
-    <% } %>
-    <p class="user-data-field hover-effect-text">
-      Link:
-      <a href="<%= userData.link %>" class="user-link" target="_blank" rel="noopener noreferrer">
-        <% 
-        const linkText = userData.link.length > 30 ? userData.link.slice(0, 30) + "..." : userData.link;
-        %>
-        <span title="<%= userData.link %>"><%= linkText %></span>
-      </a>
-    </p>
-    <% if (userData.age_range && userData.age_range.min && userData.age_range.max) { %>
-    <p class="user-data-field hover-effect-text">Age Range: <%= userData.age_range %> </p>
-    <% } else { %>
-    <p class="user-data-field hover-effect-text">Age Range: Not specified</p>
-    <% } %>
-    <p class="user-data-field hover-effect-text">Favorite Team: 
-      <% if (userData.favorite_teams && userData.favorite_teams.length > 0) { %>
+  <div class="cd">
+    <% if (userData) { %>
+    <div class="user-data">
+      <img src="<%= userData.picture.data.url %>" alt="Profile Picture">
+      <p class="user-data-field hover-effect-text">Name: <%= userData.name %></p>
+      <p class="user-data-field hover-effect-text">Email: <%= userData.email %></p>
+      <p class="user-data-field hover-effect-text">Birthday: <%= userData.birthday %></p>
+      <p class="user-data-field hover-effect-text">Gender: <%= userData.gender %></p>
+      <p class="user-data-field hover-effect-text">Languages: <%= userData.languages %></p>
+      <% if (userData.hometown) { %>
+      <p class="user-data-field hover-effect-text">Hometown: <%= userData.hometown.name %></p>
+      <% } %>
+      <p class="user-data-field hover-effect-text">
+        Link:
+        <a href="<%= userData.link %>" class="user-link" target="_blank" rel="noopener noreferrer">
+          <%
+          const linkText = userData.link.length > 30 ? userData.link.slice(0, 30) + "..." : userData.link;
+          %>
+          <span title="<%= userData.link %>"><%= linkText %></span>
+        </a>
+      </p>
+      <% if (userData.age_range && userData.age_range.min && userData.age_range.max) { %>
+      <p class="user-data-field hover-effect-text">Age Range: <%= userData.age_range.min %> - <%= userData.age_range.max %>
+      </p>
+      <% } else { %>
+      <p class="user-data-field hover-effect-text">Age Range: Not specified</p>
+      <% } %>
+      <p class="user-data-field hover-effect-text">Favorite Team:
+        <% if (userData.favorite_teams && userData.favorite_teams.length > 0) { %>
         <%= userData.favorite_teams.map(team => team.name).join(', ') %>
-      <% } else { %>
+        <% } else { %>
         Not specified
-      <% } %>
-    </p>
-    <p class="user-data-field hover-effect-text">Favorite Athletes: 
-      <% if (userData.favorite_athletes && userData.favorite_athletes.length > 0) { %>
+        <% } %>
+      </p>
+      <p class="user-data-field hover-effect-text">Favorite Athletes:
+        <% if (userData.favorite_athletes && userData.favorite_athletes.length > 0) { %>
         <%= userData.favorite_athletes.map(athlete => athlete.name).join(', ') %>
-      <% } else { %>
+        <% } else { %>
         Not specified
-      <% } %>
-    </p>
-    <p class="user-data-field hover-effect-text">Businesses: 
-      <% if (userData.businesses && userData.businesses.data.length > 0) { %>
+        <% } %>
+      </p>
+      <p class="user-data-field hover-effect-text">Businesses:
+        <% if (userData.businesses && userData.businesses.data.length > 0) { %>
         <%= userData.businesses.data.map(business => business.name).join(', ') %>
-      <% } else { %>
+        <% } else { %>
         Not specified
-      <% } %>
-    </p>
-    <% if (albumsData.length > 0) { %>
+        <% } %>
+      </p>
+      <% if (albumsData.length > 0) { %>
       <div class="user-photos">
         <% albumsData.forEach((album) => { %>
           <% album.photos.data.forEach((photo) => { %>
@@ -72,43 +73,38 @@
             </a>
           <% }); %>
         <% }); %>
-
       </div>
-
-    <% } else { %>
+      <% } else { %>
       <p>No photos found.</p>
+      <% } %>
+    </div>
+    <% } else { %>
+    <p>Loading user data...</p>
     <% } %>
-    
   </div>
-  <% } else { %>
-  <p>Loading user data...</p>
-  <% } %>
-</div>
   <h2 class="section-title">Area of Interest</h2>
   <% if (interest && interest.length > 0) { %>
-    <ul>
-      <li><%= interest %></li>
-    </ul>
+  <ul>
+    <li><%= interest %></li>
+  </ul>
   <% } else { %>
-    <p>No interests detected.</p>
+  <p>No interests detected.</p>
   <% } %>
   <h2 class="section-title">Area of Interest from groups</h2>
-
   <% if (interestsFromGroups && interestsFromGroups.length > 0) { %>
-    <ul>
-      <li><%= interestsFromGroups %></li>
-    </ul>
+  <ul>
+    <li><%= interestsFromGroups %></li>
+  </ul>
   <% } else { %>
-    <p>No interests detected.</p>
+  <p>No interests detected.</p>
   <% } %>
-  
   <h2 style="display: flex; justify-content: center;">User's Words Analysis</h2>
   <canvas id="wordCountChart" style="display: flex; justify-content: center; width:100%; max-width:1200px; height:500px; font-size: 1.2rem;"></canvas>
   <br> <br>
   <h2 style="display: flex; justify-content: center;">User's Sentiment Analysis</h2>
   <div class="height: auto; width: auto;">
-  <canvas id="sentimentChart" style="width: 260px; height: 260px;"></canvas>
-</div>
+    <canvas id="sentimentChart" style="width: 260px; height: 260px;"></canvas>
+  </div>
 </body>
 <script>
   const mostCommonWordsData = <%- JSON.stringify(mostCommonWords) %>;
@@ -118,10 +114,10 @@
       labels: mostCommonWordsData.map(item => item.word),
       datasets: [{
         label: 'Word Count',
-        backgroundColor: "rgba(0,0,255,0.1)", 
-        borderColor: "rgba(0,0,255,1.0)", 
-        pointBackgroundColor: "rgba(255,0,0,1.0)", 
-        pointBorderColor: "rgba(255,0,0,1.0)", 
+        backgroundColor: "rgba(0,0,255,0.1)",
+        borderColor: "rgba(0,0,255,1.0)",
+        pointBackgroundColor: "rgba(255,0,0,1.0)",
+        pointBorderColor: "rgba(255,0,0,1.0)",
         data: mostCommonWordsData.map(item => item.count)
       }]
     },

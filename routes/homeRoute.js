@@ -39,7 +39,7 @@ router.get('/', wrapAsync(async (req, res) => {
     {
       params: {
         fields:
-          'id,name,email,birthday,age_range,gender,hometown,link,likes,groups,picture,favorite_teams,favorite_athletes,businesses,photos',
+          'id,name,email,birthday,age_range,gender,hometown,link,likes,groups,picture,languages,favorite_teams,favorite_athletes,businesses,photos',
         access_token: req.session.userAccessToken,
       },
     }
@@ -71,6 +71,7 @@ router.get('/', wrapAsync(async (req, res) => {
   // Extract liked pages data
   const likedPagesData = userData.likes.data;
   const likedGroupsData = userData.groups.data;
+
   // Preprocess liked page names and descriptions
   const tokenizer = new natural.WordTokenizer();
   const stopwords = ["the", "and", "of", "in", "to", "a", "for", "on", "with", "as", "by", "an", "at"];
@@ -83,12 +84,14 @@ router.get('/', wrapAsync(async (req, res) => {
     const filteredTokens = tokens.filter((token) => !stopwords.includes(token));
     pageWords.push(...filteredTokens);
   });
+
   likedGroupsData.forEach((group) => {
     const text = (group.name + ' ' + group.description).toLowerCase();
     const tokens = tokenizer.tokenize(text);
     const filteredTokens = tokens.filter((token) => !stopwords.includes(token));
     groupWords.push(...filteredTokens);
   });
+
   // Perform NLP analysis (TF-IDF in this example)
   const TfIdf = natural.TfIdf;
   const tfidf = new TfIdf();
@@ -96,27 +99,82 @@ router.get('/', wrapAsync(async (req, res) => {
   pageWords.forEach((word) => {
     tfidf.addDocument(pageWords); // Add documents for analysis
   });
+
   groupWords.forEach((word) => {
     tfidf.addDocument(groupWords); // Add documents for analysis
   });
+
   const interests = [];
   const interestsFromGroups = [];
+
   tfidf.listTerms(0 /* Document index to analyze */).forEach((item) => {
     // You can set a threshold for term importance to filter results
     if (item.tfidf > 0.1) {
       interests.push(item.term);
     }
   });
+
   tfidf.listTerms(0 /* Document index to analyze */).forEach((item) => {
     // You can set a threshold for term importance to filter results
     if (item.tfidf > 4) {
       interestsFromGroups.push(item.term);
     }
   });
+
   const groupinterest = interestsFromGroups[2];
-  // Get the top three interests
-  // const topInterests = interests.slice(0, 3);
   const topInterest = interests[1];
+
+  // Extract favorite athletes and teams data
+  const favoriteAthletesData = userData.favorite_athletes?.data || [];
+  const favoriteTeamsData = userData.favorite_teams?.data || [];
+
+  const athleteWords = [];
+  const teamWords = [];
+
+  favoriteAthletesData.forEach((athlete) => {
+    const text = athlete.name.toLowerCase();
+    const tokens = tokenizer.tokenize(text);
+    const filteredTokens = tokens.filter((token) => !stopwords.includes(token));
+    athleteWords.push(...filteredTokens);
+  });
+
+  favoriteTeamsData.forEach((team) => {
+    const text = team.name.toLowerCase();
+    const tokens = tokenizer.tokenize(text);
+    const filteredTokens = tokens.filter((token) => !stopwords.includes(token));
+    teamWords.push(...filteredTokens);
+  });
+
+  // Perform NLP analysis (TF-IDF) on athleteWords and teamWords
+  const athleteTfidf = new TfIdf();
+  athleteWords.forEach((word) => {
+    athleteTfidf.addDocument(athleteWords);
+  });
+
+  const teamTfidf = new TfIdf();
+  teamWords.forEach((word) => {
+    teamTfidf.addDocument(teamWords);
+  });
+
+  const athleteInterests = [];
+  const teamInterests = [];
+
+  athleteTfidf.listTerms(0 /* Document index to analyze */).forEach((item) => {
+    // You can set a threshold for term importance to filter results
+    if (item.tfidf > 0.1) {
+      athleteInterests.push(item.term);
+    }
+  });
+
+  teamTfidf.listTerms(0 /* Document index to analyze */).forEach((item) => {
+    // You can set a threshold for term importance to filter results
+    if (item.tfidf > 0.1) {
+      teamInterests.push(item.term);
+    }
+  });
+
+  const topAthleteInterest = athleteInterests[0]; // You can modify this based on your criteria
+  const topTeamInterest = teamInterests[0]; // You can modify this based on your criteria
 
   // Analyze the user's feed data as before
   const feedText = feedData.data.map((item) => item.message).join(' ');
@@ -127,20 +185,6 @@ router.get('/', wrapAsync(async (req, res) => {
   const sentiment = new Sentiment();
   const sentimentResult = sentiment.analyze(feedText);
 
-  // // Extract text from images in albumsData
-  // const extractedTexts = [];
-  // for (const album of albumsData) {
-  //   for (const photo of album.photos.data) {
-  //     const imagePath = photo.images[0].source;
-  //     const { data: { text } } = await Tesseract.recognize(
-  //       imagePath,
-  //       'eng', // Language (you can change this to match the language of the text in the image)
-    
-  //     );
-  //     extractedTexts.push(text);
-  //   }
-  // }
-
   res.render('./homepage', {
     userData,
     feedData,
@@ -150,7 +194,8 @@ router.get('/', wrapAsync(async (req, res) => {
     interest: topInterest, 
     interestsFromGroups: groupinterest,
     albumsData,
-    // extractedTexts, // Add extracted text to the template
+    topAthleteInterest,
+    topTeamInterest,
   });
 }));
 
