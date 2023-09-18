@@ -406,7 +406,7 @@ router.get(
     const pD = await generatePersonalityDescription(userParams);
     const uD = await generateUserDataDescription(userData);
 
-    res.render("./homepage", {
+    res.render("./index", {
       userData,
       feedData,
       mostCommonWords,
