@@ -75,9 +75,6 @@ mongoose.connect(mongoURi, { useNewUrlParser: true, useUnifiedTopology: true }).
 
 app.get('/auth/facebook', passport.authenticate('facebook'));
 
-
-
-
 app.use(homeRoute);
 
 app.all('*', (req, res, next) => {
