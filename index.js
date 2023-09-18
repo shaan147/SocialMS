@@ -31,8 +31,6 @@ const sessionConfig = {
   saveUninitialized: false
 };
 
-
-
 app.engine('ejs', ejsMate);
 app.use(express.static(__dirname + '/public'));
 app.set('view engine', 'ejs');
@@ -71,6 +69,7 @@ mongoose.connect(mongoURi, { useNewUrlParser: true, useUnifiedTopology: true }).
 }).catch((e) => {
   console.log(e)
 });
+
 
 
 app.get('/auth/facebook', passport.authenticate('facebook'));

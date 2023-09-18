@@ -45,32 +45,32 @@
       <% } %>
       <p class="user-data-field hover-effect-text">Favorite Team:
         <% if (userData.favorite_teams && userData.favorite_teams.length > 0) { %>
-          <%= userData.favorite_teams[0].name %>
+        <%= userData.favorite_teams[0].name %>
         <% } else { %>
-          Not specified
+        Not specified
         <% } %>
       </p>
       <p class="user-data-field hover-effect-text">Favorite Athlete:
         <% if (userData.favorite_athletes && userData.favorite_athletes.length > 0) { %>
-          <%= userData.favorite_athletes[0].name %>
+        <%= userData.favorite_athletes[0].name %>
         <% } else { %>
-          Not specified
+        Not specified
         <% } %>
-      </p>      
+      </p>
       <% if (albumsData.length > 0) { %>
       <div class="user-photos">
         <% albumsData.forEach((album) => { %>
-          <% album.photos.data.forEach((photo) => { %>
-            <a href="<%= photo.images[0].source %>" target="_blank">
-              <img src="<%= photo.images[0].source %>" alt="User Photo" style="width: 50px; height: 50px;">
-            </a>
-          <% }); %>
+        <% album.photos.data.forEach((photo) => { %>
+        <a href="<%= photo.images[0].source %>" target="_blank">
+          <img src="<%= photo.images[0].source %>" alt="User Photo" style="width: 50px; height: 50px;">
+        </a>
+        <% }); %>
         <% }); %>
       </div>
       <% } else { %>
       <p>No photos found.</p>
       <% } %>
-      
+
     </div>
     <% } else { %>
     <p>Loading user data...</p>
@@ -103,44 +103,67 @@
     <h2 style="display: flex; justify-content: center;">Personality Scores</h2>
     <canvas id="personalityChart" style="display: flex; justify-content: center; width:100%; max-width:1200px; height:500px; font-size: 1.2rem;"></canvas>
   </div>
+  <div>
+    <p>Personality Description: <%= pD.content %></p>
+  </div>
+  <div>
+    <p>User Description: <%= uD.content %></p>
+  </div>
 </body>
 <script>
-  const mostCommonWordsData = <%- JSON.stringify(mostCommonWords) %>;
-  new Chart("wordCountChart", {
-    type: "line",
-    data: {
-      labels: mostCommonWordsData.map(item => item.word),
-      datasets: [{
-        label: 'Word Count',
-        backgroundColor: "rgba(0,0,255,0.1)",
-        borderColor: "rgba(0,0,255,1.0)",
-        pointBackgroundColor: "rgba(255,0,0,1.0)",
-        pointBorderColor: "rgba(255,0,0,1.0)",
-        data: mostCommonWordsData.map(item => item.count)
-      }]
-    },
-    options: {
-      scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: true,
-            max: Math.max(...mostCommonWordsData.map(item => item.count)),
-            fontSize: 17
-          }
-        }],
-        xAxes: [{
-          ticks: {
-            fontSize: 17
-          }
-        }]
-      },
-      legend: {
-        labels: {
+  // Shuffle function to randomize array elements
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+const mostCommonWordsData = <%- JSON.stringify(mostCommonWords) %>;
+
+// Shuffle the mostCommonWordsData array randomly
+shuffleArray(mostCommonWordsData);
+
+// Generate a random RGB color with 50% opacity
+const randomRGBAColor = () => {
+  const random255 = () => Math.floor(Math.random() * 256);
+  return `rgba(${random255()}, ${random255()}, ${random255()}, 0.5)`;
+};
+
+new Chart("wordCountChart", {
+  type: "bar",
+  data: {
+    labels: mostCommonWordsData.map(item => item.word),
+    datasets: [{
+      label: 'Word Count',
+      backgroundColor: mostCommonWordsData.map(() => randomRGBAColor()),
+      borderColor: mostCommonWordsData.map(() => randomRGBAColor()), // Random border color
+      borderWidth: 1, // Set border width to 1
+      data: mostCommonWordsData.map(item => item.count)
+    }]
+  },
+  options: {
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero: true,
+          max: Math.max(...mostCommonWordsData.map(item => item.count)),
           fontSize: 17
         }
+      }],
+      xAxes: [{
+        ticks: {
+          fontSize: 17
+        }
+      }]
+    },
+    legend: {
+      labels: {
+        fontSize: 17
       }
     }
-  });
+  }
+});
 
   const sentiment = <%- JSON.stringify(sentiment) %>;
   const sentimentScore = sentiment.score;
@@ -164,7 +187,7 @@
     options: sentimentChartOptions
   });
 
-    // Personality Scores Radar Chart Data
+  // Personality Scores Radar Chart Data
   const personalityScoresData = {
     extroversion: <%= personalityScores.extroversion %>,
     neuroticism: <%= personalityScores.neuroticism %>,
@@ -199,9 +222,7 @@
       elements: {
         arc: {
           backgroundColor: function(context) {
-            // Customize the background color if needed
-            // You can use the provided createRadialGradient3 function
-            // to create custom gradients
+
           },
         }
       }
