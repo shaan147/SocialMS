@@ -3,10 +3,91 @@ const axios = require('axios');
 const natural = require('natural');
 const Sentiment = require('sentiment');
 const router = express.Router();
+const fs = require('fs');
 const NGrams = natural;
 const wrapAsync = require('../utils/wrapAsync');
 const Msdata = require('../read-csv');
+const csv = require('csv-parser'); // Import the csv-parser library
+const csvFilePath = './extras/mypersonality_final.csv';
 
+// Function to load and preprocess CSV data
+function loadAndPreprocessCSVData() {
+  return new Promise((resolve, reject) => {
+    const csvData = []; // Array to store CSV data
+
+    // Read the CSV file and parse it
+    fs.createReadStream(csvFilePath)
+      .pipe(csv())
+      .on('data', (row) => {
+        csvData.push(row);
+      })
+      .on('end', () => {
+        // Resolve the promise with the loaded and preprocessed CSV data
+        resolve(csvData);
+      })
+      .on('error', (error) => {
+        // Reject the promise if there's an error
+        reject(error);
+      });
+  });
+}
+// Function to extract relevant parameters
+function extractRelevantParameters(csvData) {
+  return csvData.map((row) => ({
+    text: row.STATUS,
+    extroversion: parseFloat(row.sEXT),
+    neuroticism: parseFloat(row.sNEU),
+    agreeableness: parseFloat(row.sAGR),
+    conscientiousness: parseFloat(row.sCON),
+    openness: parseFloat(row.sOPN),
+  }));
+}
+// Function to calculate Euclidean distance between two points
+function euclideanDistance(point1, point2) {
+  // Calculate the square of differences for each dimension
+  const squaredDifferences = Object.keys(point1).map((trait) => {
+    const diff = point1[trait] - point2[trait];
+    return diff * diff;
+  });
+
+  // Sum the squared differences and take the square root
+  const sumOfSquaredDifferences = squaredDifferences.reduce(
+    (sum, squaredDiff) => sum + squaredDiff,
+    0
+  );
+  return Math.sqrt(sumOfSquaredDifferences);
+}
+// Function to find the closest match in CSV data
+function findClosestMatch(userParams, csvData) {
+  let closestMatch = null;
+  let minDistance = Infinity;
+
+  // Iterate through each row in the CSV data
+  for (const row of csvData) {
+    // Calculate the similarity (distance) between user data and CSV row
+    const csvParams = {
+      extroversion: parseFloat(row.sEXT),
+      neuroticism: parseFloat(row.sNEU),
+      agreeableness: parseFloat(row.sAGR),
+      conscientiousness: parseFloat(row.sCON),
+      openness: parseFloat(row.sOPN),
+    };
+
+    // You can also calculate similarity for text data (userParams.text and row.STATUS)
+    // For example, using Jaccard similarity or TF-IDF cosine similarity
+
+    // Calculate the Euclidean distance between user data and CSV row
+    const distance = euclideanDistance(userParams, csvParams);
+
+    // Update closestMatch and minDistance if a closer match is found
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestMatch = row;
+    }
+  }
+
+  return closestMatch;
+}
 const tokenizer = new natural.WordTokenizer();
 
 function preprocessText(text) {
@@ -31,6 +112,30 @@ function analyzeTextFrequency(textData, minOccurrences) {
 
   return { mostCommonWords, wordFrequency };
 }
+function calculatePersonalityScores(text) {
+  const tokens = preprocessText(text);
+  const extroversionWords = ['outgoing', 'social', 'gregarious', 'friendly', 'bholay', 'dostana'];
+  const neuroticismWords = ['anxious', 'worried', 'nervous', 'fearful', 'tangdil', 'fikri'];
+  const agreeablenessWords = ['kind', 'friendly', 'compassionate', 'helpful', 'meharbani', 'dostana'];
+  const conscientiousnessWords = ['organized', 'responsible', 'efficient', 'dependable', 'muntazim', 'zimmedar'];
+  const opennessWords = ['creative', 'curious', 'imaginative', 'open-minded', 'tajruba-kar', 'khulay dil wala'];
+  const extroversionScore = tokens.filter((token) => extroversionWords.some((word) => token.includes(word))).length;
+  const neuroticismScore = tokens.filter((token) => neuroticismWords.some((word) => token.includes(word))).length;
+  const agreeablenessScore = tokens.filter((token) => agreeablenessWords.some((word) => token.includes(word))).length;
+  const conscientiousnessScore = tokens.filter((token) => conscientiousnessWords.some((word) => token.includes(word))).length;
+  const opennessScore = tokens.filter((token) => opennessWords.some((word) => token.includes(word))).length;
+
+  return {
+    extroversion: extroversionScore,
+    neuroticism: neuroticismScore,
+    agreeableness: agreeablenessScore,
+    conscientiousness: conscientiousnessScore,
+    openness: opennessScore,
+  };
+}
+
+
+
 
 router.get('/', wrapAsync(async (req, res) => {
   // Fetch user data using the user access token
@@ -68,11 +173,9 @@ router.get('/', wrapAsync(async (req, res) => {
 
   const feedData = fetchUserFeed.data;
 
-  // Extract liked pages data
   const likedPagesData = userData.likes.data;
   const likedGroupsData = userData.groups.data;
 
-  // Preprocess liked page names and descriptions
   const tokenizer = new natural.WordTokenizer();
   const stopwords = ["the", "and", "of", "in", "to", "a", "for", "on", "with", "as", "by", "an", "at"];
   const pageWords = [];
@@ -92,30 +195,27 @@ router.get('/', wrapAsync(async (req, res) => {
     groupWords.push(...filteredTokens);
   });
 
-  // Perform NLP analysis (TF-IDF in this example)
   const TfIdf = natural.TfIdf;
   const tfidf = new TfIdf();
 
   pageWords.forEach((word) => {
-    tfidf.addDocument(pageWords); // Add documents for analysis
+    tfidf.addDocument(pageWords); 
   });
 
   groupWords.forEach((word) => {
-    tfidf.addDocument(groupWords); // Add documents for analysis
+    tfidf.addDocument(groupWords); 
   });
 
   const interests = [];
   const interestsFromGroups = [];
 
-  tfidf.listTerms(0 /* Document index to analyze */).forEach((item) => {
-    // You can set a threshold for term importance to filter results
+  tfidf.listTerms(0).forEach((item) => {
     if (item.tfidf > 0.1) {
       interests.push(item.term);
     }
   });
 
-  tfidf.listTerms(0 /* Document index to analyze */).forEach((item) => {
-    // You can set a threshold for term importance to filter results
+  tfidf.listTerms(0).forEach((item) => {
     if (item.tfidf > 4) {
       interestsFromGroups.push(item.term);
     }
@@ -124,7 +224,6 @@ router.get('/', wrapAsync(async (req, res) => {
   const groupinterest = interestsFromGroups[2];
   const topInterest = interests[1];
 
-  // Extract favorite athletes and teams data
   const favoriteAthletesData = userData.favorite_athletes?.data || [];
   const favoriteTeamsData = userData.favorite_teams?.data || [];
 
@@ -145,7 +244,6 @@ router.get('/', wrapAsync(async (req, res) => {
     teamWords.push(...filteredTokens);
   });
 
-  // Perform NLP analysis (TF-IDF) on athleteWords and teamWords
   const athleteTfidf = new TfIdf();
   athleteWords.forEach((word) => {
     athleteTfidf.addDocument(athleteWords);
@@ -159,32 +257,50 @@ router.get('/', wrapAsync(async (req, res) => {
   const athleteInterests = [];
   const teamInterests = [];
 
-  athleteTfidf.listTerms(0 /* Document index to analyze */).forEach((item) => {
-    // You can set a threshold for term importance to filter results
+  athleteTfidf.listTerms(0).forEach((item) => {
     if (item.tfidf > 0.1) {
       athleteInterests.push(item.term);
     }
   });
 
-  teamTfidf.listTerms(0 /* Document index to analyze */).forEach((item) => {
-    // You can set a threshold for term importance to filter results
+  teamTfidf.listTerms(0 ).forEach((item) => {
     if (item.tfidf > 0.1) {
       teamInterests.push(item.term);
     }
   });
 
-  const topAthleteInterest = athleteInterests[0]; // You can modify this based on your criteria
-  const topTeamInterest = teamInterests[0]; // You can modify this based on your criteria
+  const topAthleteInterest = athleteInterests[0]; 
+  const topTeamInterest = teamInterests[0]; 
 
   // Analyze the user's feed data as before
   const feedText = feedData.data.map((item) => item.message).join(' ');
   const tokens = preprocessText(feedText);
-  const minOccurrences = 5;
+  const minOccurrences = 2;
   const { mostCommonWords, wordFrequency } = analyzeTextFrequency(tokens, minOccurrences);
 
   const sentiment = new Sentiment();
   const sentimentResult = sentiment.analyze(feedText);
 
+  const personalityScores = calculatePersonalityScores(feedText);
+  console.log(personalityScores);
+  let csvData;
+  try {
+    csvData = await loadAndPreprocessCSVData();
+  } catch (error) {
+    console.error('Error loading CSV data:', error);
+    return res.status(500).send('Internal server error');
+  }
+  const userParams = {
+    extroversion: personalityScores.extroversion,
+    neuroticism: personalityScores.neuroticism,
+    agreeableness: personalityScores.agreeableness,
+    conscientiousness: personalityScores.conscientiousness,
+    openness: personalityScores.openness,
+    text: feedData,
+  };
+  
+  const closestMatch = findClosestMatch(userParams, csvData);
+  console.log(closestMatch);
   //Implementing the CSV file here
   Msdata.map(({ Hometown, Language, Religion, LivesIn, Result }) => {
     if (userData.hometown.name === Hometown) {
@@ -192,7 +308,7 @@ router.get('/', wrapAsync(async (req, res) => {
     }
   })
   // res.send(userData)
-  console.log(Msdata);
+  // console.log(Msdata);
   res.render('./homepage', {
     userData,
     feedData,
