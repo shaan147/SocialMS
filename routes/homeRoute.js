@@ -321,6 +321,7 @@ router.get('/', wrapAsync(async (req, res) => {
     topAthleteInterest,
     topTeamInterest,
     languages: userData.languages,
+    personalityScores,
   });
 }));
 

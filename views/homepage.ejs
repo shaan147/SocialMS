@@ -99,6 +99,10 @@
   <div class="height: auto; width: auto;">
     <canvas id="sentimentChart" style="width: 260px; height: 260px;"></canvas>
   </div>
+  <div>
+    <h2 style="display: flex; justify-content: center;">Personality Scores</h2>
+    <canvas id="personalityChart" style="display: flex; justify-content: center; width:100%; max-width:1200px; height:500px; font-size: 1.2rem;"></canvas>
+  </div>
 </body>
 <script>
   const mostCommonWordsData = <%- JSON.stringify(mostCommonWords) %>;
@@ -159,6 +163,52 @@
     data: sentimentChartData,
     options: sentimentChartOptions
   });
+
+    // Personality Scores Radar Chart Data
+  const personalityScoresData = {
+    extroversion: <%= personalityScores.extroversion %>,
+    neuroticism: <%= personalityScores.neuroticism %>,
+    agreeableness: <%= personalityScores.agreeableness %>,
+    conscientiousness: <%= personalityScores.conscientiousness %>,
+    openness: <%= personalityScores.openness %>,
+  };
+
+  const data = {
+    labels: Object.keys(personalityScoresData),
+    datasets: [{
+      data: Object.values(personalityScoresData),
+      backgroundColor: [
+        'rgba(255, 0, 0, 0.5)', // Red for extroversion
+        'rgba(255, 165, 0, 0.5)', // Orange for neuroticism
+        'rgba(255, 255, 0, 0.5)', // Yellow for agreeableness
+        'rgba(0, 128, 0, 0.5)', // Green for conscientiousness
+        'rgba(0, 0, 255, 0.5)' // Blue for openness
+      ],
+    }]
+  };
+
+  const config = {
+    type: 'polarArea',
+    data: data,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: false,
+        tooltip: false,
+      },
+      elements: {
+        arc: {
+          backgroundColor: function(context) {
+            // Customize the background color if needed
+            // You can use the provided createRadialGradient3 function
+            // to create custom gradients
+          },
+        }
+      }
+    }
+  };
+
+  new Chart("personalityChart", config);
 </script>
 
 </html>
