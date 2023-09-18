@@ -199,11 +199,11 @@ router.get('/', wrapAsync(async (req, res) => {
   const tfidf = new TfIdf();
 
   pageWords.forEach((word) => {
-    tfidf.addDocument(pageWords); 
+    tfidf.addDocument(pageWords);
   });
 
   groupWords.forEach((word) => {
-    tfidf.addDocument(groupWords); 
+    tfidf.addDocument(groupWords);
   });
 
   const interests = [];
@@ -263,14 +263,14 @@ router.get('/', wrapAsync(async (req, res) => {
     }
   });
 
-  teamTfidf.listTerms(0 ).forEach((item) => {
+  teamTfidf.listTerms(0).forEach((item) => {
     if (item.tfidf > 0.1) {
       teamInterests.push(item.term);
     }
   });
 
-  const topAthleteInterest = athleteInterests[0]; 
-  const topTeamInterest = teamInterests[0]; 
+  const topAthleteInterest = athleteInterests[0];
+  const topTeamInterest = teamInterests[0];
 
   // Analyze the user's feed data as before
   const feedText = feedData.data.map((item) => item.message).join(' ');
@@ -298,7 +298,7 @@ router.get('/', wrapAsync(async (req, res) => {
     openness: personalityScores.openness,
     text: feedData,
   };
-  
+
   const closestMatch = findClosestMatch(userParams, csvData);
   console.log(closestMatch);
   //Implementing the CSV file here
