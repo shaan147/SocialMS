@@ -37,33 +37,26 @@
           <span title="<%= userData.link %>"><%= linkText %></span>
         </a>
       </p>
-      <% if (userData.age_range && userData.age_range.min && userData.age_range.max) { %>
-      <p class="user-data-field hover-effect-text">Age Range: <%= userData.age_range.min %> - <%= userData.age_range.max %>
+      <% if (userData.age_range && userData.age_range.min) { %>
+      <p class="user-data-field hover-effect-text">Age: <%= userData.age_range.min %>
       </p>
       <% } else { %>
-      <p class="user-data-field hover-effect-text">Age Range: Not specified</p>
+      <p class="user-data-field hover-effect-text">Age: Not specified</p>
       <% } %>
       <p class="user-data-field hover-effect-text">Favorite Team:
         <% if (userData.favorite_teams && userData.favorite_teams.length > 0) { %>
-        <%= userData.favorite_teams.map(team => team.name).join(', ') %>
+          <%= userData.favorite_teams[0].name %>
         <% } else { %>
-        Not specified
+          Not specified
         <% } %>
       </p>
-      <p class="user-data-field hover-effect-text">Favorite Athletes:
+      <p class="user-data-field hover-effect-text">Favorite Athlete:
         <% if (userData.favorite_athletes && userData.favorite_athletes.length > 0) { %>
-        <%= userData.favorite_athletes.map(athlete => athlete.name).join(', ') %>
+          <%= userData.favorite_athletes[0].name %>
         <% } else { %>
-        Not specified
+          Not specified
         <% } %>
-      </p>
-      <p class="user-data-field hover-effect-text">Businesses:
-        <% if (userData.businesses && userData.businesses.data.length > 0) { %>
-        <%= userData.businesses.data.map(business => business.name).join(', ') %>
-        <% } else { %>
-        Not specified
-        <% } %>
-      </p>
+      </p>      
       <% if (albumsData.length > 0) { %>
       <div class="user-photos">
         <% albumsData.forEach((album) => { %>

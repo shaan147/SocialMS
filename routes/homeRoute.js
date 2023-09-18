@@ -2,7 +2,6 @@ const express = require('express');
 const axios = require('axios');
 const natural = require('natural');
 const Sentiment = require('sentiment');
-const Tesseract = require('tesseract.js'); // Import the Tesseract OCR library
 const router = express.Router();
 const NGrams = natural;
 const wrapAsync = require('../utils/wrapAsync');
@@ -187,11 +186,11 @@ router.get('/', wrapAsync(async (req, res) => {
   const sentimentResult = sentiment.analyze(feedText);
 
   // Implementing the CSV file here
-  Msdata.map(({ Hometown, Language, Religion, LivesIn, Result }) => {
-    if (userData.hometown.name === Hometown) {
-      console.log(Result)
-    }
-  })
+  // Msdata.map(({ Hometown, Language, Religion, LivesIn, Result }) => {
+  //   // if (userData.hometown.name === Hometown) {
+  //   //   // console.log(Result)
+  //   // }
+  // })
   res.send(userData)
   // console.log(Msdata);
   // res.render('./homepage', {
