@@ -302,11 +302,11 @@ router.get('/', wrapAsync(async (req, res) => {
   const closestMatch = findClosestMatch(userParams, csvData);
   console.log(closestMatch);
   //Implementing the CSV file here
-  Msdata.map(({ Hometown, Language, Religion, LivesIn, Result }) => {
-    if (userData.hometown.name === Hometown) {
-      console.log(Result)
-    }
-  })
+  // Msdata.map(({ Hometown, Language, Religion, LivesIn, Result }) => {
+  //   if (userData.hometown.name === Hometown) {
+  //     console.log(Result)
+  //   }
+  // })
   // res.send(userData)
   // console.log(Msdata);
   res.render('./homepage', {

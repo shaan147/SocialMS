@@ -351,6 +351,7 @@ function readCsvData() {
       .on('error', (error) => {
         reject(error);
       });
+    return data
   });
 }
 
@@ -440,4 +441,4 @@ async function readCsvFile(apiData, csvFilePath, location) {
   return { foundResults, exactMatch };
 }
 
-module.exports = { writeCsvData, readCsvFile };
+module.exports = { writeCsvData, readCsvFile, readCsvData };
